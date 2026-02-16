@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: springboot-backend:latest  # <--- Hna dir smit l-image li derti f "docker build"
+        imagePullPolicy: Never
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mariadb://mariadb:3306/springboot
+        - name: SPRING_DATASOURCE_USERNAME
+          value: root
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: mysql-root-password
+        - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+          value: update
+        ports:
+        - containerPort: 8080
+        # Best Practice: LivenessProbe bach K8s i-3ref wach l-app khdama
+       
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  type: NodePort # <--- Beddel ClusterIP l NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080 
+      
