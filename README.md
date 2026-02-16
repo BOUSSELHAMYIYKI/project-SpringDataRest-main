@@ -18,3 +18,4 @@ The application consists of three services:
 
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:8080# project-kubernetes
+# project-kubernetes
